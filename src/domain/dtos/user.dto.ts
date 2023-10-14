@@ -1,3 +1,4 @@
+import { CustomError } from '../errors/customError.js'
 import { userSchema } from '../models/userSchema.js'
 
 export interface IUserDto {
@@ -23,8 +24,11 @@ export class UserDto {
     this.password = password
   }
 
-  static create(user: IUserDto) {
-    const validatedUser = userSchema.parse(user)
-    return new UserDto(validatedUser)
+  static create(user: IUserDto): UserDto | undefined {
+    const validatedUser = userSchema.safeParse(user)
+    if (validatedUser.success) {
+      return new UserDto(validatedUser.data)
+    }
+    throw CustomError.badRequest(validatedUser.error)
   }
 }

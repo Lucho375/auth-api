@@ -4,7 +4,7 @@ import { AuthRepositoryImpl } from '../../infrastructure/repositories/auth.repos
 import { AuthDatasourceImpl } from '../../infrastructure/datasources/auth.datasource.impl.js'
 
 export class AuthRouter {
-  static get routes() {
+  static get routes(): Router {
     const router = Router()
 
     /**

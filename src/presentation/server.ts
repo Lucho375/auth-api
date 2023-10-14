@@ -1,5 +1,7 @@
-import express, { Express, Router, urlencoded } from 'express'
-import { Server as HTTPServer, IncomingMessage, ServerResponse } from 'http'
+import express, { type Express, type Router, urlencoded } from 'express'
+import { type Server as HTTPServer, type IncomingMessage, type ServerResponse } from 'http'
+import cookieParser from 'cookie-parser'
+import { ErrorHandler } from './middlewares/errorHandler.js'
 
 interface IServerOptions {
   port: number
@@ -7,9 +9,9 @@ interface IServerOptions {
 }
 
 export class Server {
-  private app: Express
-  private port: number
-  private routes: Router
+  private readonly app: Express
+  private readonly port: number
+  private readonly routes: Router
   private serverListener?: HTTPServer<typeof IncomingMessage, typeof ServerResponse>
 
   constructor({ port, routes }: IServerOptions) {
@@ -21,23 +23,30 @@ export class Server {
     this.setupErrorHandler()
   }
 
-  private setupMiddlewares() {
+  private setupMiddlewares(): void {
     // this.app.use(cors())
     this.app.use(urlencoded({ extended: true }))
     this.app.use(express.json())
+    this.app.use(cookieParser())
   }
 
-  private setupRoutes() {
+  private setupRoutes(): void {
     this.app.use(this.routes)
   }
 
-  private setupErrorHandler() {}
-
-  close() {
-    this.serverListener?.close(() => console.log('Server closed'))
+  private setupErrorHandler(): void {
+    this.app.use(ErrorHandler)
   }
 
-  listen() {
-    this.serverListener = this.app.listen(this.port, () => console.log(`Server running on ${this.port}`))
+  close(): void {
+    this.serverListener?.close(() => {
+      console.log('Server closed')
+    })
+  }
+
+  listen(): void {
+    this.serverListener = this.app.listen(this.port, () => {
+      console.log(`Server running on ${this.port}`)
+    })
   }
 }

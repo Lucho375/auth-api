@@ -1,5 +1,6 @@
-import { AuthDatasource } from '../../domain/datasources/auth.datasource.js'
-import { IUserDto } from '../../domain/dtos/user.dto.js'
+import { type AuthDatasource } from '../../domain/datasources/auth.datasource.js'
+import { type ILoginCredentials } from '../../domain/dtos/login.dto.js'
+import { type IUserDto } from '../../domain/dtos/user.dto.js'
 import { AuthRepository } from '../../domain/repositories/auth.repository.js'
 
 export class AuthRepositoryImpl extends AuthRepository {
@@ -7,11 +8,11 @@ export class AuthRepositoryImpl extends AuthRepository {
     super()
   }
 
-  login(userCredentials: any): Promise<any> {
-    return this.authDatasource.login(userCredentials)
+  async login(userCredentials: ILoginCredentials): Promise<any> {
+    return await this.authDatasource.login(userCredentials)
   }
 
-  register(userDto: IUserDto): Promise<any> {
-    return this.authDatasource.register(userDto)
+  async register(userDto: IUserDto): Promise<any> {
+    return await this.authDatasource.register(userDto)
   }
 }
