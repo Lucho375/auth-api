@@ -11,6 +11,7 @@ export class AppRouter {
     router.use('/api/auth', AuthRouter.routes)
     // private routes
     router.use('/api/private', isAuthenticated, PrivateRouter.routes)
+    router.use('*', (_req, res) => res.status(404).send({ error: 'Resource not found' }))
 
     return router
   }
