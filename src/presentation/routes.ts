@@ -1,18 +1,16 @@
-import { type Response, Router } from 'express'
+import { Router } from 'express'
 import { AuthRouter } from './auth/routes.js'
-import { type AuthenticatedRequest, isAuthenticated } from './middlewares/auth.js'
+import { isAuthenticated } from './middlewares/auth.js'
+import { PrivateRouter } from './private/routes.js'
 
 export class AppRouter {
   static get routes(): Router {
     const router = Router()
 
-    // auth
+    // public routes
     router.use('/api/auth', AuthRouter.routes)
-
     // private routes
-    router.get('/private', isAuthenticated, (req: AuthenticatedRequest, res: Response) => {
-      res.send({ route: 'private', user: req.user })
-    })
+    router.use('/api/private', isAuthenticated, PrivateRouter.routes)
 
     return router
   }

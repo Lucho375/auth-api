@@ -2,7 +2,7 @@ import { userModel } from '../../data/models/user.model.js'
 import { AuthDatasource } from '../../domain/datasources/auth.datasource.js'
 import { type ILoginCredentials } from '../../domain/dtos/login.dto.js'
 import { type IUserDto } from '../../domain/dtos/user.dto.js'
-import { UserEntity, type IUserEntity } from '../../domain/entities/user.entity.js'
+import { UserEntity } from '../../domain/entities/user.entity.js'
 import { CustomError } from '../../domain/errors/customError.js'
 import { BcryptAdapter } from '../adapters/bcryptAdapter.js'
 import { JwtAdapter } from '../adapters/jwtAdapter.js'
@@ -10,7 +10,16 @@ import { JwtAdapter } from '../adapters/jwtAdapter.js'
 type THashPassword = (str: string) => Promise<string>
 type TComparePassword = (str: string, hash: string) => Promise<boolean>
 type TGenerateToken = (object: Record<string, unknown>) => Promise<string>
-export type Token = string
+
+export interface IUserCredentials {
+  token: string
+  user: {
+    id: string
+    email: string
+    firstname: string
+    lastname: string
+  }
+}
 
 export class AuthDatasourceImpl extends AuthDatasource {
   constructor(
@@ -21,7 +30,7 @@ export class AuthDatasourceImpl extends AuthDatasource {
     super()
   }
 
-  async register({ email, password, ...rest }: IUserDto): Promise<IUserEntity> {
+  async register({ email, password, ...rest }: IUserDto): Promise<UserEntity> {
     const userExists = await userModel.findOne({ email })
 
     if (userExists !== null) {
@@ -32,7 +41,7 @@ export class AuthDatasourceImpl extends AuthDatasource {
     return new UserEntity({ ...createdUser.toObject(), id: createdUser._id.toString() })
   }
 
-  async login({ email, password }: ILoginCredentials): Promise<string> {
+  async login({ email, password }: ILoginCredentials): Promise<IUserCredentials> {
     const user = await userModel.findOne({ email })
 
     if (user === null) {
@@ -45,8 +54,16 @@ export class AuthDatasourceImpl extends AuthDatasource {
       throw CustomError.badRequest('Invalid password')
     }
 
-    const token = await this.generateToken({ id: user._id, firstname: user.firstname, email: user.email })
+    const token = await this.generateToken({ id: user._id, firstname: user.firstname, email: user.email, lastname: user.lastname })
 
-    return token
+    return {
+      token,
+      user: {
+        id: user.id,
+        email: user.email,
+        firstname: user.firstname,
+        lastname: user.lastname
+      }
+    }
   }
 }

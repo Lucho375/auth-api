@@ -20,7 +20,7 @@ export async function isAuthenticated(req: AuthenticatedRequest, res: Response, 
     if (authHeader === undefined) {
       throw CustomError.unauthorized('No auth header provided') // 401
     }
-    const token = (authHeader as string)?.split(' ')[1]
+    const token = (authHeader as string)?.split('Bearer ')[1]
     const user = await JwtAdapter.validateToken<IToken>(token)
     req.user = user
     next()

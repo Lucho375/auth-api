@@ -11,6 +11,7 @@ export function ErrorHandler(err: Error, req: Request, res: Response, next: Next
   if (err instanceof TokenExpiredError || err instanceof JsonWebTokenError) {
     return res.status(401).send({ success: false, message: 'Invalid token provided' })
   }
+  console.log(err)
 
   // unhandled
   res.status(500).send({ success: false, message: 'Internal Server Error' })

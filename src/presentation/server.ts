@@ -1,6 +1,8 @@
-import express, { type Express, type Router, urlencoded } from 'express'
-import { type Server as HTTPServer, type IncomingMessage, type ServerResponse } from 'http'
 import cookieParser from 'cookie-parser'
+import cors from 'cors'
+import express, { urlencoded, type Express, type Router } from 'express'
+import { type Server as HTTPServer, type IncomingMessage, type ServerResponse } from 'http'
+import { corsOptions } from '../config/cors.js'
 import { ErrorHandler } from './middlewares/errorHandler.js'
 
 interface IServerOptions {
@@ -24,7 +26,7 @@ export class Server {
   }
 
   private setupMiddlewares(): void {
-    // this.app.use(cors())
+    this.app.use(cors(corsOptions))
     this.app.use(urlencoded({ extended: true }))
     this.app.use(express.json())
     this.app.use(cookieParser())

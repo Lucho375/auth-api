@@ -34,4 +34,8 @@ export class CustomError extends Error {
   static notFound(message: string): CustomError {
     return new CustomError(message, 404, '[NotFound Error]')
   }
+
+  static cors(): CustomError {
+    return new CustomError('Not allowed by CORS', 403, '[CORS Error]')
+  }
 }
