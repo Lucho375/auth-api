@@ -10,6 +10,6 @@ export const corsOptions: CorsOptions = {
   //     callback(CustomError.cors())
   //   }
   // },
-  origin: 'https://react-auth-example-sandy.vercel.app/',
+  origin: 'https://react-auth-example-sandy.vercel.app',
   credentials: true
 }
